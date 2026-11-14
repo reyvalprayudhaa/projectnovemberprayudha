@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Her Special Day - Interactive Gift</title>
+  
+  <!-- Import Google Fonts: Playfair Display (Serif Mewah) & Inter (Sans-serif Bersih) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS untuk layout responsif & utilitas -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* ==========================================================================
+       VARIABEL WARNA & TEMA (SAMA PERSIS DENGAN VIDEO)
+       ========================================================================== */
+    :root {
+      --bg-dark: #0e0716;
+      --bg-purple-glow: #291342;
+      --white: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.65);
+      --pink: #f472b6;
+      --pink-glow: rgba(244, 114, 182, 0.45);
+      --card-bg: rgba(28, 15, 45, 0.55);
+      --border: rgba(255, 255, 255, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: radial-gradient(circle at 50% 45%, var(--bg-purple-glow) 0%, #150924 45%, var(--bg-dark) 100%);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      user-select: none;
+    }
+
+    /* Tipografi Judul Utama */
+    .font-serif-title {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 700;
+      color: var(--white);
+      text-shadow: 0 0 32px rgba(232, 160, 191, 0.42);
+      letter-spacing: -0.01em;
+    }
+
+    /* Subtitle Kecil di Atas Judul */
+    .eyebrow-text {
+      font-size: 0.72rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+    }
+
+    .eyebrow-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background-color: var(--pink);
+      box-shadow: 0 0 8px var(--pink);
+    }
+
+    /* ==========================================================================
+       SISTEM HALAMAN / SECTION TRANSITIONS
+       ========================================================================== */
+    .page-section {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.97) translateY(10px);
+      transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+                  visibility 0.8s;
+      z-index: 10;
+      overflow-y: auto;
+    }
+
+    .page-section.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateY(0);
+      z-index: 20;
+    }
+
+    /* ==========================================================================
+       TOMBOL INTERAKTIF (PILL BUTTON)
+       ========================================================================== */
+    .btn-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 0.78rem 1.85rem;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: var(--white);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-pill:hover {
+      background: rgba(244, 114, 182, 0.18);
+      border-color: rgba(244, 114, 182, 0.55);
+      box-shadow: 0 0 28px var(--pink-glow), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .btn-pill:active {
+      transform: scale(0.97);
+    }
+
+    /* ==========================================================================
+       SECTION 1: COUNTDOWN BOXES
+       ========================================================================== */
+    .countdown-box {
+      background: rgba(18, 9, 30, 0.65);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      width: 78px;
+      height: 86px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+    }
+
+    @media (min-width: 640px) {
+      .countdown-box {
+        width: 96px;
+        height: 104px;
+      }
+    }
+
+    .countdown-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.85rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--white);
+    }
+
+    @media (min-width: 640px) {
+      .countdown-num {
+        font-size: 2.35rem;
+      }
+    }
+
+    .countdown-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.45rem;
+    }
+
+    .countdown-colon {
+      color: rgba(244, 114, 182, 0.6);
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    /* ==========================================================================
+       SECTION 2: KOTAK KADO INTERAKTIF (GIFT BOX)
+       ========================================================================== */
+    .gift-container {
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .gift-container:hover {
+      transform: scale(1.06);
+    }
+
+    .gift-box-wrapper {
+      position: relative;
+      width: 130px;
+      height: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 0 35px rgba(168, 85, 247, 0.45));
+      animation: floatGift 3.2s ease-in-out infinite;
+    }
+
+    @keyframes floatGift {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .gift-box-wrapper.opening .gift-lid {
+      transform: translateY(-45px) rotate(-14deg);
+      opacity: 0;
+    }
+
+    .gift-box-wrapper.opening .gift-base {
+      transform: scale(1.15);
+      opacity: 0;
+    }
+
+    .gift-lid {
+      transition: all 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+      transform-origin: left bottom;
+    }
+
+    .gift-base {
+      transition: all 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* ==========================================================================
+       SECTION 3: HERO POLAROIDS FLOATING (KIRI & KANAN)
+       ========================================================================== */
+    .hero-polaroid-col {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      display: none;
+      flex-direction: column;
+      gap: 1.35rem;
+      z-index: 15;
+      pointer-events: none;
+    }
+
+    @media (min-width: 1024px) {
+      .hero-polaroid-col {
+        display: flex;
+      }
+    }
+
+    .hero-polaroid-col.left { left: 3.5rem; }
+    .hero-polaroid-col.right { right: 3.5rem; }
+
+    .mini-polaroid {
+      background: #ffffff;
+      padding: 7px 7px 20px 7px;
+      border-radius: 3px;
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.65);
+      width: 122px;
+      color: #333;
+      text-align: center;
+      transition: transform 0.4s ease;
+    }
+
+    .mini-polaroid img {
+      width: 100%;
+      height: 106px;
+      object-fit: cover;
+      display: block;
+      background: #e5e7eb;
+    }
+
+    .mini-polaroid span {
+      display: block;
+      font-size: 0.62rem;
+      font-style: italic;
+      color: #6b7280;
+      margin-top: 5px;
+      font-family: 'Playfair Display', serif;
+    }
+
+    /* ==========================================================================
+       SECTION 4: LETTER & TYPEWRITER EFFECT
+       ========================================================================== */
+    .letter-title {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 700;
+      color: var(--white);
+      text-align: center;
+      text-shadow: 0 0 30px rgba(232, 160, 191, 0.45);
+      margin-bottom: 1.5rem;
+    }
+
+    .letter-card {
+      width: 100%;
+      max-width: 680px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: clamp(1.5rem, 4vw, 2.75rem);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      text-align: left;
+    }
+
+    .letter-body {
+      font-size: clamp(0.88rem, 1.5vw, 0.98rem);
+      line-height: 1.78;
+      color: rgba(255, 255, 255, 0.88);
+      font-weight: 300;
+    }
+
+    .letter-body p {
+      margin-bottom: 1.15rem;
+    }
+
+    .letter-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    .tw-char {
+      display: inline;
+      opacity: 0;
+      animation: charAppear 0.08s ease forwards;
+    }
+
+    @keyframes charAppear {
+      to { opacity: 1; }
+    }
+
+    .tw-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.1em;
+      background: var(--pink);
+      vertical-align: middle;
+      animation: cursorBlink 0.7s ease-in-out infinite;
+      margin-left: 2px;
+    }
+
+    @keyframes cursorBlink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    .letter-sig {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.1rem;
+      color: var(--pink);
+      margin-top: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    .letter-sig.visible {
+      opacity: 1;
+    }
+
+    /* ==========================================================================
+       SECTION 5: OUR MEMORIES GALLERY (GRID POLAROID 3x3)
+       ========================================================================== */
+    .gallery-section-scroll {
+      justify-content: flex-start;
+      padding-top: 3.5rem;
+      padding-bottom: 4rem;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.15rem;
+      max-width: 780px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 640px) {
+      .gallery-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.65rem;
+      }
+    }
+
+    .polaroid-card {
+      background: #ffffff;
+      padding: 10px 10px 28px 10px;
+      border-radius: 3px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.55);
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+      cursor: pointer;
+    }
+
+    .polaroid-card:nth-child(odd) { transform: rotate(-2deg); }
+    .polaroid-card:nth-child(even) { transform: rotate(2deg); }
+    .polaroid-card:nth-child(3n) { transform: rotate(-1.2deg); }
+
+    .polaroid-card:hover {
+      transform: scale(1.06) rotate(0deg) !important;
+      box-shadow: 0 22px 45px rgba(244, 114, 182, 0.35);
+      z-index: 5;
+    }
+
+    .polaroid-card img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      background: #f3f4f6;
+    }
+
+    .polaroid-caption {
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 0.75rem;
+      color: #555;
+      margin-top: 8px;
+    }
+
+    /* ==========================================================================
+       SECTION 6: VIDEO PLAYER FRAME
+       ========================================================================== */
+    .video-wrapper {
+      width: 100%;
+      max-width: 640px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 40px rgba(168, 85, 247, 0.25);
+      background: #000;
+      aspect-ratio: 16 / 9;
+    }
+
+    .video-wrapper video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ==========================================================================
+       SECTION 8: ROTATING ENDING MESSAGES
+       ========================================================================== */
+    .ending-title-rotator {
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .ending-title-rotator.fade-out {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.98);
+    }
+
+    /* ==========================================================================
+       FLOATING HEARTS & SPARKLES CANVAS
+       ========================================================================== */
+    #hearts-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 30;
+    }
+
+    /* ==========================================================================
+       FOOTER CREDIT, MUSIC WIDGET & TOMBOL EDIT
+       ========================================================================== */
+    .footer-credit {
+      position: fixed;
+      bottom: 1.25rem;
+      left: 1.5rem;
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.35);
+      z-index: 40;
+      letter-spacing: 0.04em;
+    }
+
+    .music-pill {
+      position: fixed;
+      bottom: 1.25rem;
+      right: 1.5rem;
+      z-index: 40;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      background: rgba(24, 12, 38, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(12px);
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .music-pill:hover {
+      border-color: var(--pink);
+      box-shadow: 0 0 18px var(--pink-glow);
+    }
+
+    .editor-trigger-btn {
+      position: fixed;
+      top: 1.15rem;
+      left: 1.25rem;
+      z-index: 45;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 9999px;
+      background: rgba(24, 12, 38, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .editor-trigger-btn:hover {
+      color: #fff;
+      border-color: var(--pink);
+      background: rgba(45, 20, 70, 0.9);
+    }
+
+    .eq-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 12px;
+    }
+
+    .eq-bar {
+      width: 2.5px;
+      height: 4px;
+      background: var(--pink);
+      border-radius: 2px;
+      transition: height 0.2s ease;
+    }
+
+    .music-pill.playing .eq-bar:nth-child(1) { animation: eqBounce 0.6s infinite ease-in-out alternate; }
+    .music-pill.playing .eq-bar:nth-child(2) { animation: eqBounce 0.45s infinite ease-in-out alternate 0.15s; }
+    .music-pill.playing .eq-bar:nth-child(3) { animation: eqBounce 0.7s infinite ease-in-out alternate 0.3s; }
+
+    @keyframes eqBounce {
+      0% { height: 3px; }
+      100% { height: 12px; }
+    }
+
+    /* ==========================================================================
+       MODAL EDITOR KONTEN & PANDUAN STRUKTUR FOLDER
+       ========================================================================== */
+    .editor-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 4, 14, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      user-select: text;
+    }
+
+    .editor-modal-backdrop.open {
+      display: flex;
+    }
+
+    .editor-panel {
+      background: #180c26;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 18px;
+      width: 100%;
+      max-width: 760px;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.8);
+    }
+
+    .editor-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+      padding: 0.55rem 0.8rem;
+      color: #fff;
+      font-size: 0.82rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .editor-input:focus {
+      border-color: var(--pink);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Tombol Buka Panel Editor & Struktur Folder Assets -->
+  <button id="btn-open-editor" class="editor-trigger-btn" title="Edit Isi, Foto, Lagu & Lihat Struktur Folder">
+
+  </button>
+
+  <!-- Canvas Partikel Hati Melayang -->
+  <canvas id="hearts-canvas"></canvas>
+
+  <!-- Audio Musik Latar -->
+  <audio id="bg-music" loop></audio>
+
+  <!-- ========================================================================
+       HALAMAN 1: COUNTDOWN ("Her Special Day is Coming")
+       ======================================================================== -->
+  <section id="sec-countdown" class="page-section active">
+    <div class="text-center max-w-2xl mx-auto px-4">
+      <div class="eyebrow-text mb-4">
+        <span class="eyebrow-dot"></span>
+        <span id="txt-cd-eyebrow">MENGHITUNG HARI</span>
+        <span class="eyebrow-dot"></span>
+      </div>
+
+      <h1 class="font-serif-title text-4xl sm:text-6xl md:text-7xl leading-tight mb-3">
+        <span id="txt-cd-title-1">Her Special Day</span><br>
+        <span id="txt-cd-title-2" class="text-3xl sm:text-5xl md:text-6xl font-normal">is Coming 🕊️</span>
+      </h1>
+
+      <p id="txt-cd-subtitle" class="text-xs sm:text-sm text-white/60 mb-9 tracking-wide">
+        Sesuatu yang indah sedang menunggu untukmu 💌
+      </p>
+
+      <!-- Kotak Hitung Mundur -->
+      <div class="flex items-center justify-center gap-2.5 sm:gap-4 mb-10">
+        <div class="countdown-box">
+          <span id="cd-days" class="countdown-num">00</span>
+          <span class="countdown-label">HARI</span>
+        </div>
+        <span class="countdown-colon">:</span>
+        <div class="countdown-box">
+          <span id="cd-hours" class="countdown-num">00</span>
+          <span class="countdown-label">JAM</span>
+        </div>
+        <span class="countdown-colon">:</span>
+        <div class="countdown-box">
+          <span id="cd-mins" class="countdown-num">00</span>
+          <span class="countdown-label">MENIT</span>
+        </div>
+        <span class="countdown-colon">:</span>
+        <div class="countdown-box">
+          <span id="cd-secs" class="countdown-num">00</span>
+          <span class="countdown-label">DETIK</span>
+        </div>
+      </div>
+
+      <button id="btn-open-gift" class="btn-pill">
+        <span id="txt-cd-btn">OPEN HER GIFT</span>
+        <span>&rarr;</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       HALAMAN 2: KOTAK KADO INTERAKTIF ("ADA SESUATU UNTUKMU")
+       ======================================================================== -->
+  <section id="sec-gift" class="page-section">
+    <div class="text-center flex flex-col items-center">
+      <div class="eyebrow-text mb-8">
+        <span class="eyebrow-dot"></span>
+        <span>ADA SESUATU UNTUKMU</span>
+        <span class="eyebrow-dot"></span>
+      </div>
+
+      <!-- Ikon Kotak Kado SVG dengan Animasi Tutup Terbuka -->
+      <div id="gift-trigger" class="gift-container mb-8" title="Klik untuk membuka kado">
+        <div id="gift-box-anim" class="gift-box-wrapper">
+          <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="boxGrad" x1="20" y1="45" x2="100" y2="110" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.65"/>
+                <stop offset="100%" stop-color="#4c1d95" stop-opacity="0.85"/>
+              </linearGradient>
+              <linearGradient id="lidGrad" x1="15" y1="25" x2="105" y2="50" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.85"/>
+                <stop offset="100%" stop-color="#6d28d9" stop-opacity="0.95"/>
+              </linearGradient>
+              <linearGradient id="ribbonGrad" x1="50" y1="15" x2="70" y2="110" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#f9a8d4"/>
+                <stop offset="100%" stop-color="#ec4899"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Badan Kotak Kado -->
+            <g class="gift-base">
+              <rect x="24" y="48" width="72" height="58" rx="8" fill="url(#boxGrad)" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+              <rect x="53" y="48" width="14" height="58" fill="url(#ribbonGrad)" opacity="0.9"/>
+            </g>
+
+            <!-- Tutup Kotak & Pita Atas -->
+            <g class="gift-lid">
+              <path d="M60 32C52 18 35 18 38 30C40 36 53 34 60 32Z" fill="url(#ribbonGrad)"/>
+              <path d="M60 32C68 18 85 18 82 30C80 36 67 34 60 32Z" fill="url(#ribbonGrad)"/>
+              <rect x="18" y="32" width="84" height="18" rx="6" fill="url(#lidGrad)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+              <rect x="53" y="32" width="14" height="18" fill="url(#ribbonGrad)"/>
+            </g>
+
+            <!-- Kilauan Bintang Kecil -->
+            <circle cx="28" cy="24" r="2" fill="#f9a8d4" opacity="0.8"/>
+            <circle cx="95" cy="22" r="2.5" fill="#ffffff" opacity="0.7"/>
+            <circle cx="98" cy="65" r="1.5" fill="#f9a8d4" opacity="0.8"/>
+          </svg>
+        </div>
+      </div>
+
+      <p class="text-xs tracking-[0.2em] text-white/55 flex items-center gap-2">
+        <span>✨</span>
+        <span>klik untuk membuka</span>
+        <span>✨</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       HALAMAN 3: HERO OPENING ("Your Special Day") + POLAROID KIRI KANAN
+       ======================================================================== -->
+  <section id="sec-hero" class="page-section">
+    <div id="hero-polaroids-left" class="hero-polaroid-col left"></div>
+
+    <div class="text-center max-w-2xl mx-auto px-4 z-20">
+      <div class="eyebrow-text mb-4">
+        <span class="eyebrow-dot"></span>
+        <span id="txt-hero-eyebrow">A LOVE LETTER FOR YOU</span>
+        <span class="eyebrow-dot"></span>
+      </div>
+
+      <h1 id="txt-hero-title" class="font-serif-title text-5xl sm:text-7xl md:text-8xl mb-4">
+        Your Special Day
+      </h1>
+
+      <p id="txt-hero-subtitle" class="text-xs sm:text-sm text-white/60 mb-9 tracking-wider">
+        crafted with love, just for you
+      </p>
+
+      <button id="btn-read-letter" class="btn-pill">
+        <span class="text-pink-400">✦</span>
+        <span>READ MY LETTER</span>
+        <span class="text-pink-400">✦</span>
+      </button>
+    </div>
+
+    <div id="hero-polaroids-right" class="hero-polaroid-col right"></div>
+  </section>
+
+  <!-- ========================================================================
+       HALAMAN 4: SURAT UCAPAN TYPEWRITER ("Happy Birthday")
+       ======================================================================== -->
+  <section id="sec-letter" class="page-section">
+    <div class="w-full max-w-3xl mx-auto flex flex-col items-center px-2">
+      <h2 id="txt-letter-heading" class="letter-title text-4xl sm:text-5xl md:text-6xl">
+        Happy Birthday
+      </h2>
+
+      <div class="letter-card">
+        <div id="letter-typewriter-body" class="letter-body"></div>
+        <div id="letter-signature" class="letter-sig"></div>
+      </div>
+
+      <div id="letter-next-wrap" class="mt-8 opacity-0 pointer-events-none transition-opacity duration-700">
+        <button id="btn-to-memories" class="btn-pill">
+          <span>OUR MEMORIES</span>
+          <span>&rarr;</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       HALAMAN 5: GALERI KENANGAN ("Our Memories")
+       ======================================================================== -->
+  <section id="sec-memories" class="page-section gallery-section-scroll">
+    <div class="w-full max-w-4xl mx-auto text-center px-3">
+      <h2 class="font-serif-title text-4xl sm:text-5xl md:text-6xl mb-2">
+        Our Memories
+      </h2>
+      <div class="eyebrow-text mb-8">
+        <span class="eyebrow-dot"></span>
+        <span>every moment captured in love</span>
+        <span class="eyebrow-dot"></span>
+      </div>
+
+      <div id="memories-grid" class="gallery-grid mb-10"></div>
+
+      <button id="btn-to-video" class="btn-pill">
+        <span>A MOMENT FOR YOU</span>
+        <span>&rarr;</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       HALAMAN 6: VIDEO MOMEN SPESIAL ("A Moment For You")
+       ======================================================================== -->
+  <section id="sec-video" class="page-section">
+    <div class="w-full max-w-3xl mx-auto text-center flex flex-col items-center px-3">
+      <h2 class="font-serif-title text-4xl sm:text-5xl md:text-6xl mb-2">
+        A Moment For You
+      </h2>
+      <div class="eyebrow-text mb-7">
+        <span class="eyebrow-dot"></span>
+        <span>a special video message</span>
+        <span class="eyebrow-dot"></span>
+      </div>
+
+      <div class="video-wrapper mb-8">
+        <video id="special-video" controls playsinline preload="metadata">
+          <source id="special-video-src" src="" type="video/mp4">
+          Browser Anda tidak mendukung pemutar video.
+        </video>
+      </div>
+
+      <button id="btn-to-wishes" class="btn-pill">
+        <span>BIRTHDAY WISHES</span>
+        <span>&rarr;</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       HALAMAN 7: HARAPAN ULANG TAHUN ("Birthday Wishes")
+       ======================================================================== -->
+  <section id="sec-wishes" class="page-section">
+    <div class="letter-card text-center max-w-xl mx-auto flex flex-col items-center">
+      <h2 class="font-serif-title text-4xl sm:text-5xl mb-2">
+        Birthday Wishes
+      </h2>
+      <p id="txt-wishes-sub" class="text-xs text-pink-300/80 tracking-widest uppercase mb-6">
+        Happy Birthday, my love ✨
+      </p>
+
+      <div id="txt-wishes-body" class="text-xs sm:text-sm text-white/80 leading-relaxed space-y-4 mb-7 font-light"></div>
+
+      <div class="text-3xl mb-7 animate-pulse drop-shadow-[0_0_15px_rgba(244,114,182,0.8)]">
+        💖
+      </div>
+
+      <button id="btn-to-ending" class="btn-pill">
+        <span>ONE MORE THING</span>
+        <span>&rarr;</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       HALAMAN 8: PENUTUP INTERAKTIF ("With All My Love" -> Rotasi Teks)
+       ======================================================================== -->
+  <section id="sec-ending" class="page-section">
+    <div class="text-center max-w-3xl mx-auto px-4 flex flex-col items-center">
+      <h1 id="ending-rotating-title" class="font-serif-title ending-title-rotator text-4xl sm:text-6xl md:text-7xl mb-5 min-h-[1.2em]">
+        With All My Love
+      </h1>
+
+      <p id="txt-ending-sub1" class="text-xs sm:text-sm text-white/65 mb-1">
+        Thank you for being part of my life.
+      </p>
+      <p id="txt-ending-sub2" class="text-xs sm:text-sm text-white/65 mb-6">
+        I hope this little gift can make your special day even more beautiful.
+      </p>
+
+      <p id="txt-ending-forever" class="font-serif-title text-lg sm:text-xl text-pink-300 mb-9">
+        Forever yours 💖
+      </p>
+
+      <button id="btn-replay" class="btn-pill">
+        <span>↻</span>
+        <span>REPLAY FROM START</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       FOOTER KIRI & TOMBOL MUSIK KANAN BAWAH
+       ======================================================================== -->
+  <div id="footer-credit-text" class="footer-credit">
+    with love, Your Name
+  </div>
+
+  <button id="btn-music-toggle" class="music-pill" title="Putar / Jeda Musik">
+    <div class="eq-bars">
+      <span class="eq-bar"></span>
+      <span class="eq-bar"></span>
+      <span class="eq-bar"></span>
+    </div>
+    <span id="music-status-text">Play Music</span>
+  </button>
+
+  <!-- ========================================================================
+       MODAL PANEL EDITOR & PANDUAN STRUKTUR FOLDER PROYEK
+       ======================================================================== -->
+  <div id="editor-modal" class="editor-modal-backdrop">
+    <div class="editor-panel">
+      <!-- Header Modal -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-white/10">
+        <div>
+          <h3 class="font-serif-title text-xl">Edit Konten, Foto & Lagu</h3>
+          <p class="text-[11px] text-white/50">Ubah isi langsung di sini atau atur folder <code class="text-pink-300">assets/</code> di VS Code</p>
+        </div>
+        <button id="btn-close-editor" class="text-white/60 hover:text-white text-xl px-2">&times;</button>
+      </div>
+
+      <!-- Isi Form Editor (Scrollable) -->
+      <div class="p-6 overflow-y-auto space-y-6 text-xs">
+        
+        <!-- Panduan Struktur Folder VS Code -->
+        <div class="bg-black/40 border border-pink-400/25 rounded-xl p-4">
+          <div class="font-semibold text-pink-300 mb-1.5">📁 Panduan Susunan Folder di Komputer / VS Code:</div>
+          <pre class="text-[11px] text-white/75 font-mono leading-relaxed overflow-x-auto">project-ulang-tahun/
+├── index.html               &lt;-- File utama ini
+└── assets/
+    ├── images/
+    │   ├── foto1.jpg ... foto9.jpg
+    ├── video/
+    │   └── video.mp4
+    └── audio/
+        └── lagu.mp3</pre>
+        </div>
+
+        <!-- Pengaturan Umum & Tanggal -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-white/60 mb-1">Tanggal Hitung Mundur</label>
+            <input id="inp-target-date" type="datetime-local" class="editor-input" />
+          </div>
+          <div>
+            <label class="block text-white/60 mb-1">Nama Pengirim (Kamu)</label>
+            <input id="inp-sender" type="text" class="editor-input" placeholder="Contoh: Irfan Lukman" />
+          </div>
+          <div>
+            <label class="block text-white/60 mb-1">Nama Penerima (Pasangan)</label>
+            <input id="inp-recipient" type="text" class="editor-input" placeholder="Contoh: Sayangku ✨" />
+          </div>
+        </div>
+
+        <!-- Isi Surat Utama -->
+        <div>
+          <label class="block text-white/60 mb-1">Isi Surat Utama (Pisahkan tiap paragraf dengan baris kosong / Enter 2x)</label>
+          <textarea id="inp-letter" rows="5" class="editor-input leading-relaxed"></textarea>
+        </div>
+
+        <!-- File Lagu & Video -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-white/60 mb-1">Lagu Latar (Pilih file MP3 lokal atau isi path <code class="text-pink-300">assets/audio/lagu.mp3</code>)</label>
+            <input id="inp-music-path" type="text" class="editor-input mb-1.5" placeholder="assets/audio/lagu.mp3" />
+            <input id="inp-music-file" type="file" accept="audio/*" class="text-[11px] text-white/70" />
+          </div>
+          <div>
+            <label class="block text-white/60 mb-1">Video Spesial (Pilih file MP4 lokal atau isi path <code class="text-pink-300">assets/video/video.mp4</code>)</label>
+            <input id="inp-video-path" type="text" class="editor-input mb-1.5" placeholder="assets/video/video.mp4" />
+            <input id="inp-video-file" type="file" accept="video/*" class="text-[11px] text-white/70" />
+          </div>
+        </div>
+
+        <!-- Daftar 9 Foto Kenangan -->
+        <div>
+          <label class="block text-white/60 mb-2">9 Foto Kenangan (Upload langsung dari galeri HP/PC atau isi path <code class="text-pink-300">assets/images/foto1.jpg</code>)</label>
+          <div id="editor-photos-list" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
+        </div>
+      </div>
+
+      <!-- Footer Modal -->
+      <div class="flex flex-wrap items-center justify-between gap-2 px-6 py-4 border-t border-white/10 bg-black/30">
+        <button id="btn-download-html" class="px-4 py-2 rounded-full border border-white/20 text-xs text-white/80 hover:text-white hover:border-pink-400 transition">
+          ⬇️ Unduh File index.html
+        </button>
+        <div class="flex items-center gap-2">
+          <button id="btn-cancel-editor" class="px-4 py-2 rounded-full text-xs text-white/60 hover:text-white">
+            Batal
+          </button>
+          <button id="btn-save-editor" class="px-5 py-2 rounded-full bg-pink-500 hover:bg-pink-400 text-white font-medium text-xs shadow-lg shadow-pink-500/30 transition">
+            Simpan & Terapkan
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       JAVASCRIPT: KONFIGURASI KONTEN & LOGIKA INTERAKTIF
+       ======================================================================== -->
+  <script>
+    /**
+     * ========================================================================
+     * ✏️ KONFIGURASI UTAMA (TERHUBUNG KE FOLDER assets/ & EDITOR VISUAL)
+     * ========================================================================
+     */
+    const CONFIG = {
+      // 1. Tanggal Target Hitung Mundur
+      targetDate: "2026-11-14T00:00:00",
+
+      // 2. Nama Pengirim & Nama Penerima
+      senderName: "prayudha",
+      recipientFullName: "Nur Khofifah ✨",
+
+      // 3. Teks Halaman Awal (Countdown)
+      countdown: {
+        eyebrow: "MENGHITUNG HARI",
+        titleLine1: "Her Special Day",
+        titleLine2: "is Coming 🕊️",
+        subtitle: "Sesuatu yang indah sedang menunggu untukmu 💌",
+        buttonText: "OPEN HER GIFT"
+      },
+
+      // 4. Teks Halaman Pembuka Surat (Hero)
+      hero: {
+        eyebrow: "A LOVE LETTER FOR YOU",
+        title: "Your Special Day",
+        subtitle: "crafted with love, just for you"
+      },
+
+      // 5. Isi Surat Utama (Efek Mesin Tik)
+      letter: {
+        heading: "Happy Birthday",
+        paragraphs: [
+          "Di umur yang baru ini, aku cuma mau doain semoga semua hal baik selalu datang ke hidup sayang. Semoga sehat selalu, panjang umur, dimudahkan segala urusannya, dan semua impian sayang bisa tercapai satu per satu.",
+          "Tetap jadi pribadi yang kuat, baik, dan hebat seperti sekarang ya, sayang. Jangan lupa kalo aku selalu ada buat sayang dalam keadaan apa pun.",
+          "Sekali lagi, selamat ulang tahun ya, sayangku. Semoga hari ini penuh kebahagiaan dan tahun tahun berikutnya menjadi tahun terbaik untuk sayang.",
+          "I love you, today, tomorrow, and always<3"
+        ],
+        signature: "— Prayudha"
+      },
+
+      // 6. Daftar 9 Foto Kenangan (Menggunakan path folder assets/images/ + fallback otomatis)
+      memories: [
+        { url: "assets/images/foto1.jpeg", fallback: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=500&q=80", caption: "moment 1" },
+        { url: "assets/images/foto2.jpeg", fallback: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=500&q=80", caption: "moment 2" },
+        { url: "assets/images/foto3.jpeg", fallback: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=500&q=80", caption: "moment 3" },
+        { url: "assets/images/foto4.jpeg", fallback: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=500&q=80", caption: "moment 4" },
+        { url: "assets/images/foto5.jpeg", fallback: "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=500&q=80", caption: "moment 5" },
+        { url: "assets/images/foto6.jpeg", fallback: "https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=500&q=80", caption: "moment 6" },
+        { url: "assets/images/foto7.jpeg", fallback: "https://images.unsplash.com/photo-1507504031003-b417219a0fde?auto=format&fit=crop&w=500&q=80", caption: "moment 7" },
+        { url: "assets/images/foto8.jpeg", fallback: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=500&q=80", caption: "moment 8" },
+        { url: "assets/images/foto9.jpeg", fallback: "https://images.unsplash.com/photo-1494774157365-9e04c6720e47?auto=format&fit=crop&w=500&q=80", caption: "moment 9" }
+      ],
+
+      // 7. Path Video Spesial (Folder assets/video/ + fallback otomatis)
+      videoUrl: "assets/video/video.mp4",
+      videoFallback: "https://assets.mixkit.co/videos/preview/mixkit-couple-walking-on-the-beach-at-sunset-42937-large.mp4",
+
+      // 8. Teks Halaman Harapan (Birthday Wishes)
+      wishes: {
+        subtitle: "Happy Birthday, my love ✨",
+        paragraphs: [
+          "I wish you happiness, good health, success, and endless blessings in this new chapter of your life. May all your dreams come true, your days be filled with joy, and your heart always find peace.",
+          "Thank you for being such a wonderful part of my life. I hope this year brings you everything you've been wishing for. Stay happy, stay healthy, and keep shining. I love you always."
+        ]
+      },
+
+      // 9. Teks Halaman Penutup
+      ending: {
+        rotatingTitles: [
+          "With All My Love",
+          "Happy Birthday!",
+          "Nur Khofifah ✨",
+          "You Mean The World To Me"
+        ],
+        subLine1: "Thank you for being part of my life.",
+        subLine2: "I hope this little gift can make your special day even more beautiful.",
+        foreverText: "Forever yours 💖"
+      },
+
+      // 10. Path Lagu Latar MP3 (Folder assets/audio/lagu.mp3)
+      musicUrl: "assets/audio/lagu.mp3"
+    };
+
+    /**
+     * ========================================================================
+     * INISIALISASI KONTEN KE HALAMAN HTML
+     * ========================================================================
+     */
+    function applyConfig() {
+      // Countdown
+      document.getElementById("txt-cd-eyebrow").textContent = CONFIG.countdown.eyebrow;
+      document.getElementById("txt-cd-title-1").textContent = CONFIG.countdown.titleLine1;
+      document.getElementById("txt-cd-title-2").textContent = CONFIG.countdown.titleLine2;
+      document.getElementById("txt-cd-subtitle").textContent = CONFIG.countdown.subtitle;
+      document.getElementById("txt-cd-btn").textContent = CONFIG.countdown.buttonText;
+
+      // Hero
+      document.getElementById("txt-hero-eyebrow").textContent = CONFIG.hero.eyebrow;
+      document.getElementById("txt-hero-title").textContent = CONFIG.hero.title;
+      document.getElementById("txt-hero-subtitle").textContent = CONFIG.hero.subtitle;
+
+      // Letter heading & signature
+      document.getElementById("txt-letter-heading").textContent = CONFIG.letter.heading;
+      CONFIG.letter.signature = `— ${CONFIG.senderName}`;
+
+      // Render Hero Side Polaroids (3 Kiri, 3 Kanan)
+      const leftCol = document.getElementById("hero-polaroids-left");
+      const rightCol = document.getElementById("hero-polaroids-right");
+      leftCol.innerHTML = "";
+      rightCol.innerHTML = "";
+      const rotationsLeft = ["-8deg", "6deg", "-6deg"];
+      const rotationsRight = ["8deg", "-6deg", "7deg"];
+
+      for (let i = 0; i < 3; i++) {
+        if (CONFIG.memories[i]) {
+          const mLeft = CONFIG.memories[i];
+          leftCol.innerHTML += `
+            <div class="mini-polaroid" style="transform: rotate(${rotationsLeft[i]})">
+              <img src="${mLeft.url}" alt="${mLeft.caption}" onerror="this.onerror=null; this.src='${mLeft.fallback}';">
+              <span>${mLeft.caption}</span>
+            </div>
+          `;
+        }
+        if (CONFIG.memories[i + 3]) {
+          const mRight = CONFIG.memories[i + 3];
+          rightCol.innerHTML += `
+            <div class="mini-polaroid" style="transform: rotate(${rotationsRight[i]})">
+              <img src="${mRight.url}" alt="${mRight.caption}" onerror="this.onerror=null; this.src='${mRight.fallback}';">
+              <span>${mRight.caption}</span>
+            </div>
+          `;
+        }
+      }
+
+      // Render Memories Grid (Semua 9 Foto)
+      const grid = document.getElementById("memories-grid");
+      grid.innerHTML = CONFIG.memories.map((item) => `
+        <div class="polaroid-card">
+          <img src="${item.url}" alt="${item.caption}" onerror="this.onerror=null; this.src='${item.fallback}';">
+          <div class="polaroid-caption">${item.caption}</div>
+        </div>
+      `).join("");
+
+      // Video dengan fallback otomatis jika file lokal assets/video/video.mp4 belum ada
+      const videoEl = document.getElementById("special-video");
+      const videoSrc = document.getElementById("special-video-src");
+      videoSrc.src = CONFIG.videoUrl;
+      videoEl.onerror = () => {
+        if (videoSrc.src !== CONFIG.videoFallback) {
+          videoSrc.src = CONFIG.videoFallback;
+          videoEl.load();
+        }
+      };
+      videoSrc.onerror = () => {
+        if (videoSrc.src !== CONFIG.videoFallback) {
+          videoSrc.src = CONFIG.videoFallback;
+          videoEl.load();
+        }
+      };
+      videoEl.load();
+
+      // Wishes
+      document.getElementById("txt-wishes-sub").textContent = CONFIG.wishes.subtitle;
+      document.getElementById("txt-wishes-body").innerHTML = CONFIG.wishes.paragraphs
+        .map(p => `<p>${p}</p>`)
+        .join("");
+
+      // Ending
+      CONFIG.ending.rotatingTitles[2] = CONFIG.recipientFullName;
+      document.getElementById("ending-rotating-title").textContent = CONFIG.ending.rotatingTitles[0];
+      document.getElementById("txt-ending-sub1").textContent = CONFIG.ending.subLine1;
+      document.getElementById("txt-ending-sub2").textContent = CONFIG.ending.subLine2;
+      document.getElementById("txt-ending-forever").textContent = CONFIG.ending.foreverText;
+
+      // Footer
+      document.getElementById("footer-credit-text").textContent = `with love, ${CONFIG.senderName}`;
+    }
+
+    /**
+     * ========================================================================
+     * LOGIKA HITUNG MUNDUR (COUNTDOWN TIMER)
+     * ========================================================================
+     */
+    let countdownInterval = null;
+
+    function startCountdown() {
+      if (countdownInterval) clearInterval(countdownInterval);
+
+      function update() {
+        const target = new Date(CONFIG.targetDate).getTime();
+        const now = new Date().getTime();
+        const diff = Math.max(0, target - now);
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const mins = Math.floor((diff / 1000 / 60) % 60);
+        const secs = Math.floor((diff / 1000) % 60);
+
+        document.getElementById("cd-days").textContent = String(days).padStart(2, "0");
+        document.getElementById("cd-hours").textContent = String(hours).padStart(2, "0");
+        document.getElementById("cd-mins").textContent = String(mins).padStart(2, "0");
+        document.getElementById("cd-secs").textContent = String(secs).padStart(2, "0");
+      }
+
+      update();
+      countdownInterval = setInterval(update, 1000);
+    }
+
+    /**
+     * ========================================================================
+     * NAVIGASI ANTAR HALAMAN
+     * ========================================================================
+     */
+    let currentSection = "sec-countdown";
+
+    function goToSection(sectionId) {
+      document.querySelectorAll(".page-section").forEach(sec => {
+        sec.classList.remove("active");
+      });
+      const next = document.getElementById(sectionId);
+      if (next) {
+        next.scrollTop = 0;
+        next.classList.add("active");
+        currentSection = sectionId;
+      }
+    }
+
+    /**
+     * ========================================================================
+     * EFEK MESIN TIK (TYPEWRITER) UNTUK HALAMAN SURAT
+     * ========================================================================
+     */
+    let typewriterTimer = null;
+
+    function playTypewriterLetter() {
+      if (typewriterTimer) clearTimeout(typewriterTimer);
+
+      const container = document.getElementById("letter-typewriter-body");
+      const sigEl = document.getElementById("letter-signature");
+      const nextBtnWrap = document.getElementById("letter-next-wrap");
+
+      container.innerHTML = "";
+      sigEl.textContent = CONFIG.letter.signature;
+      sigEl.classList.remove("visible");
+      nextBtnWrap.classList.add("opacity-0", "pointer-events-none");
+
+      const paragraphs = CONFIG.letter.paragraphs;
+      let pIndex = 0;
+      let charIndex = 0;
+
+      let currentP = document.createElement("p");
+      container.appendChild(currentP);
+
+      const cursor = document.createElement("span");
+      cursor.className = "tw-cursor";
+      currentP.appendChild(cursor);
+
+      function typeNextChar() {
+        if (pIndex >= paragraphs.length) {
+          cursor.remove();
+          sigEl.classList.add("visible");
+          setTimeout(() => {
+            nextBtnWrap.classList.remove("opacity-0", "pointer-events-none");
+          }, 500);
+          return;
+        }
+
+        const currentText = paragraphs[pIndex];
+
+        if (charIndex < currentText.length) {
+          const span = document.createElement("span");
+          span.className = "tw-char";
+          span.textContent = currentText[charIndex];
+          currentP.insertBefore(span, cursor);
+          charIndex++;
+
+          const ch = currentText[charIndex - 1];
+          const delay = (ch === "." || ch === ",") ? 140 : 28;
+          typewriterTimer = setTimeout(typeNextChar, delay);
+        } else {
+          pIndex++;
+          charIndex = 0;
+          if (pIndex < paragraphs.length) {
+            currentP = document.createElement("p");
+            container.appendChild(currentP);
+            currentP.appendChild(cursor);
+            typewriterTimer = setTimeout(typeNextChar, 380);
+          } else {
+            typeNextChar();
+          }
+        }
+      }
+
+      typewriterTimer = setTimeout(typeNextChar, 450);
+    }
+
+    /**
+     * ========================================================================
+     * ROTASI JUDUL HALAMAN AKHIR
+     * ========================================================================
+     */
+    let endingInterval = null;
+
+    function startEndingRotator() {
+      if (endingInterval) clearInterval(endingInterval);
+      const titleEl = document.getElementById("ending-rotating-title");
+      const titles = CONFIG.ending.rotatingTitles;
+      let idx = 0;
+
+      titleEl.textContent = titles[0];
+      titleEl.classList.remove("fade-out");
+
+      endingInterval = setInterval(() => {
+        titleEl.classList.add("fade-out");
+        setTimeout(() => {
+          idx = (idx + 1) % titles.length;
+          titleEl.textContent = titles[idx];
+          titleEl.classList.remove("fade-out");
+        }, 550);
+      }, 2800);
+    }
+
+    /**
+     * ========================================================================
+     * SISTEM PARTIKEL HATI PINK MELAYANG (CANVAS)
+     * ========================================================================
+     */
+    const canvas = document.getElementById("hearts-canvas");
+    const ctx = canvas.getContext("2d");
+    let hearts = [];
+    let continuousHearts = false;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    class HeartParticle {
+      constructor(x, y, burst = false) {
+        this.x = x ?? Math.random() * canvas.width;
+        this.y = y ?? canvas.height + 20;
+        this.size = burst ? (Math.random() * 14 + 10) : (Math.random() * 16 + 10);
+        this.speedY = burst ? -(Math.random() * 3.5 + 1.8) : -(Math.random() * 1.8 + 0.9);
+        this.speedX = burst ? (Math.random() - 0.5) * 4 : (Math.random() - 0.5) * 0.8;
+        this.opacity = Math.random() * 0.5 + 0.45;
+        this.fadeRate = burst ? 0.012 : 0.0025;
+        this.wobble = Math.random() * Math.PI * 2;
+        this.hue = Math.random() > 0.4 ? "#f472b6" : "#fb7185";
+      }
+
+      update() {
+        this.wobble += 0.04;
+        this.x += this.speedX + Math.sin(this.wobble) * 0.45;
+        this.y += this.speedY;
+        this.opacity -= this.fadeRate;
+      }
+
+      draw() {
+        if (this.opacity <= 0) return;
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.globalAlpha = Math.max(0, this.opacity);
+        ctx.shadowColor = this.hue;
+        ctx.shadowBlur = 12;
+        ctx.fillStyle = this.hue;
+
+        const s = this.size / 15;
+        ctx.scale(s, s);
+        ctx.beginPath();
+        ctx.moveTo(0, 4);
+        ctx.bezierCurveTo(0, -3, -10, -3, -10, 4);
+        ctx.bezierCurveTo(-10, 11, 0, 15, 0, 19);
+        ctx.bezierCurveTo(0, 15, 10, 11, 10, 4);
+        ctx.bezierCurveTo(10, -3, 0, -3, 0, 4);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function spawnHeartBurst(x, y, count = 18) {
+      for (let i = 0; i < count; i++) {
+        hearts.push(new HeartParticle(x, y, true));
+      }
+    }
+
+    function animateHearts() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (continuousHearts && Math.random() < 0.14) {
+        hearts.push(new HeartParticle(Math.random() * canvas.width, canvas.height + 15, false));
+      }
+
+      for (let i = hearts.length - 1; i >= 0; i--) {
+        hearts[i].update();
+        hearts[i].draw();
+        if (hearts[i].opacity <= 0 || hearts[i].y < -30) {
+          hearts.splice(i, 1);
+        }
+      }
+
+      requestAnimationFrame(animateHearts);
+    }
+
+    /**
+     * ========================================================================
+     * SISTEM AUDIO / MUSIK LATAR (assets/audio/lagu.mp3 + MELODI FALLBACK)
+     * ========================================================================
+     */
+    const musicBtn = document.getElementById("btn-music-toggle");
+    const musicStatus = document.getElementById("music-status-text");
+    const bgAudio = document.getElementById("bg-music");
+    let isPlaying = false;
+    let audioCtx = null;
+    let synthInterval = null;
+
+    function startFallbackMelody() {
+      stopFallbackMelody();
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+
+      const notes = [261.63, 329.63, 392.00, 493.88, 523.25, 493.88, 392.00, 329.63];
+      let step = 0;
+
+      function playNote() {
+        if (!isPlaying) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(notes[step % notes.length], audioCtx.currentTime);
+
+        gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.06, audioCtx.currentTime + 0.15);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.4);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 1.45);
+        step++;
+      }
+
+      playNote();
+      synthInterval = setInterval(playNote, 900);
+    }
+
+    function stopFallbackMelody() {
+      if (synthInterval) {
+        clearInterval(synthInterval);
+        synthInterval = null;
+      }
+    }
+
+    function toggleMusic(forcePlay = false) {
+      if (forcePlay && isPlaying) return;
+
+      if (!isPlaying) {
+        isPlaying = true;
+        musicBtn.classList.add("playing");
+        musicStatus.textContent = "Playing";
+
+        if (CONFIG.musicUrl) {
+          bgAudio.src = CONFIG.musicUrl;
+          bgAudio.play().catch(() => startFallbackMelody());
+        } else {
+          startFallbackMelody();
+        }
+      } else {
+        isPlaying = false;
+        musicBtn.classList.remove("playing");
+        musicStatus.textContent = "Play Music";
+        bgAudio.pause();
+        stopFallbackMelody();
+      }
+    }
+
+    musicBtn.addEventListener("click", () => toggleMusic(false));
+
+    /**
+     * ========================================================================
+     * LOGIKA PANEL EDITOR VISUAL (EDIT FOTO, LAGU, VIDEO & ISI SURAT)
+     * ========================================================================
+     */
+    const editorModal = document.getElementById("editor-modal");
+    const photosListContainer = document.getElementById("editor-photos-list");
+
+    function openEditorModal() {
+      // Isi input dengan data CONFIG saat ini
+      document.getElementById("inp-target-date").value = CONFIG.targetDate.slice(0, 16);
+      document.getElementById("inp-sender").value = CONFIG.senderName;
+      document.getElementById("inp-recipient").value = CONFIG.recipientFullName;
+      document.getElementById("inp-letter").value = CONFIG.letter.paragraphs.join("\n\n");
+      document.getElementById("inp-music-path").value = CONFIG.musicUrl;
+      document.getElementById("inp-video-path").value = CONFIG.videoUrl;
+
+      // Render 9 input foto
+      photosListContainer.innerHTML = CONFIG.memories.map((mem, idx) => `
+        <div class="bg-black/30 border border-white/10 rounded-xl p-2.5 space-y-1.5">
+          <div class="text-[11px] font-medium text-pink-300">Foto #${idx + 1}</div>
+          <input type="text" id="inp-photo-url-${idx}" value="${mem.url}" class="editor-input !text-[11px] !py-1" placeholder="assets/images/foto${idx+1}.jpg" />
+          <input type="text" id="inp-photo-cap-${idx}" value="${mem.caption}" class="editor-input !text-[11px] !py-1" placeholder="Caption" />
+          <input type="file" accept="image/*" data-idx="${idx}" class="inp-photo-file text-[10px] text-white/60 w-full" />
+        </div>
+      `).join("");
+
+      // Listener upload foto lokal (langsung diubah menjadi ObjectURL untuk preview instan)
+      document.querySelectorAll(".inp-photo-file").forEach(input => {
+        input.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          const idx = e.target.getAttribute("data-idx");
+          if (file) {
+            const objUrl = URL.createObjectURL(file);
+            document.getElementById(`inp-photo-url-${idx}`).value = objUrl;
+          }
+        });
+      });
+
+      editorModal.classList.add("open");
+    }
+
+    // Listener upload lagu & video lokal
+    document.getElementById("inp-music-file").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        document.getElementById("inp-music-path").value = URL.createObjectURL(file);
+      }
+    });
+
+    document.getElementById("inp-video-file").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        document.getElementById("inp-video-path").value = URL.createObjectURL(file);
+      }
+    });
+
+    document.getElementById("btn-open-editor").addEventListener("click", openEditorModal);
+    document.getElementById("btn-close-editor").addEventListener("click", () => editorModal.classList.remove("open"));
+    document.getElementById("btn-cancel-editor").addEventListener("click", () => editorModal.classList.remove("open"));
+
+    document.getElementById("btn-save-editor").addEventListener("click", () => {
+      const dateVal = document.getElementById("inp-target-date").value;
+      if (dateVal) CONFIG.targetDate = dateVal + ":00";
+
+      CONFIG.senderName = document.getElementById("inp-sender").value.trim() || "Your Name";
+      CONFIG.recipientFullName = document.getElementById("inp-recipient").value.trim() || "Nama Pasanganmu ✨";
+
+      const rawLetter = document.getElementById("inp-letter").value.trim();
+      if (rawLetter) {
+        CONFIG.letter.paragraphs = rawLetter.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+      }
+
+      CONFIG.musicUrl = document.getElementById("inp-music-path").value.trim();
+      CONFIG.videoUrl = document.getElementById("inp-video-path").value.trim();
+
+      CONFIG.memories.forEach((mem, idx) => {
+        const u = document.getElementById(`inp-photo-url-${idx}`).value.trim();
+        const c = document.getElementById(`inp-photo-cap-${idx}`).value.trim();
+        if (u) mem.url = u;
+        if (c) mem.caption = c;
+      });
+
+      applyConfig();
+      startCountdown();
+
+      // Jika musik sedang berjalan, muat ulang dengan lagu baru
+      if (isPlaying) {
+        stopFallbackMelody();
+        bgAudio.pause();
+        isPlaying = false;
+        toggleMusic(true);
+      }
+
+      // Jika sedang di halaman surat, ulangi efek ketik
+      if (currentSection === "sec-letter") {
+        playTypewriterLetter();
+      }
+
+      editorModal.classList.remove("open");
+    });
+
+    // Unduh file HTML lengkap untuk disimpan ke folder proyek VS Code
+    document.getElementById("btn-download-html").addEventListener("click", () => {
+      const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+      const blob = new Blob([htmlContent], { type: "text/html" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "index.html";
+      a.click();
+    });
+
+    /**
+     * ========================================================================
+     * EVENT LISTENERS ALUR INTERAKSI (SAMA PERSIS DENGAN VIDEO)
+     * ========================================================================
+     */
+    document.getElementById("btn-open-gift").addEventListener("click", (e) => {
+      spawnHeartBurst(e.clientX, e.clientY, 22);
+      toggleMusic(true);
+      setTimeout(() => {
+        goToSection("sec-gift");
+      }, 350);
+    });
+
+    document.getElementById("gift-trigger").addEventListener("click", () => {
+      const box = document.getElementById("gift-box-anim");
+      box.classList.add("opening");
+      spawnHeartBurst(window.innerWidth / 2, window.innerHeight / 2, 30);
+
+      setTimeout(() => {
+        goToSection("sec-hero");
+        setTimeout(() => box.classList.remove("opening"), 600);
+      }, 750);
+    });
+
+    document.getElementById("btn-read-letter").addEventListener("click", (e) => {
+      spawnHeartBurst(e.clientX, e.clientY, 25);
+      continuousHearts = true;
+      goToSection("sec-letter");
+      playTypewriterLetter();
+    });
+
+    document.getElementById("btn-to-memories").addEventListener("click", () => {
+      continuousHearts = false;
+      goToSection("sec-memories");
+    });
+
+    document.getElementById("btn-to-video").addEventListener("click", () => {
+      goToSection("sec-video");
+      const vid = document.getElementById("special-video");
+      if (isPlaying) toggleMusic(false);
+      vid.play().catch(() => {});
+    });
+
+    document.getElementById("btn-to-wishes").addEventListener("click", () => {
+      const vid = document.getElementById("special-video");
+      vid.pause();
+      toggleMusic(true);
+      goToSection("sec-wishes");
+    });
+
+    document.getElementById("btn-to-ending").addEventListener("click", (e) => {
+      spawnHeartBurst(e.clientX, e.clientY, 28);
+      continuousHearts = true;
+      goToSection("sec-ending");
+      startEndingRotator();
+    });
+
+    document.getElementById("btn-replay").addEventListener("click", () => {
+      continuousHearts = false;
+      if (endingInterval) clearInterval(endingInterval);
+      goToSection("sec-countdown");
+    });
+
+    window.onload = function () {
+      applyConfig();
+      startCountdown();
+      animateHearts();
+    };
+  </script>
+</body>
+</html>
